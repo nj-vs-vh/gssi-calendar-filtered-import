@@ -1,3 +1,4 @@
+import datetime
 import json
 import tqdm  # type: ignore
 import os
@@ -10,17 +11,19 @@ from googleapiclient.discovery import build  # type: ignore
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/calendar.events"]
 GSSI_CALENDAR_ID = "gssi.it_2rr8fdrnt35v2r89sakau7tln4@group.calendar.google.com"
-MY_SHORT_COURSES = [
-    "LE-6",
-    "HE-1",
-    "HE-2",
-    "HE-3",
-    "HE-4",
-    "HE-5",
-    "HE-6",
-    "HE-7",
-    "GC-5",
-]
+MY_SHORT_COURSES_MAP = {
+    "LE-6": "Monte Carlo techniques",
+    "HE-1": "Particle acceleration in astrophysical plasma",
+    "HE-2": "Data analysis techniques in HE Astroparticle Physics",
+    "HE-3": "High Energy Radiation Measurements",
+    "HE-4": "Gamma and neutrino telescopes",
+    "HE-5": "Front-end and readout electronic systems for High Energy Astroparticle Physics",
+    "HE-6": "Front-end and readout electronic systems for High Energy Astroparticle Physics",
+    "HE-7": "UHECR theory",
+    "HE-8": "Plasma physics around astrophysical compact objects",
+    "GC-5": "Astrophysics of Neutron Stars",
+}
+YEAR = 2024
 
 
 def auth():
@@ -59,8 +62,19 @@ def main():
             .execute()
         )
         for event in page["items"]:
-            if any(course in event.get("summary", "") for course in MY_SHORT_COURSES):
-                my_short_courses_events.append(event)
+            start_str = event.get("start", {}).get("dateTime", "")
+            if not start_str:
+                continue
+            if datetime.datetime.fromisoformat(start_str).date().year != YEAR:
+                continue
+            summary = event.get("summary", "")
+            summary_parts = summary.strip().split(" ")
+            prefix = summary_parts[0]
+            if not any(course_id == prefix for course_id in MY_SHORT_COURSES_MAP):
+                continue
+            new_summary = prefix + " " + MY_SHORT_COURSES_MAP[prefix]
+            event["summary"] = new_summary
+            my_short_courses_events.append(event)
         page_token = page.get("nextPageToken")
         if not page_token:
             break
@@ -72,7 +86,6 @@ def main():
         event.pop("id", None)
         event.pop("organizer", None)
         service.events().import_(calendarId=target_calendar_id, body=event).execute()
-        
 
 
 if __name__ == "__main__":
