@@ -12,16 +12,15 @@ from googleapiclient.discovery import build  # type: ignore
 SCOPES = ["https://www.googleapis.com/auth/calendar.events"]
 GSSI_CALENDAR_ID = "gssi.it_2rr8fdrnt35v2r89sakau7tln4@group.calendar.google.com"
 MY_SHORT_COURSES_MAP = {
-    "LE-6": "Monte Carlo techniques",
-    "HE-1": "Particle acceleration in astrophysical plasma",
-    "HE-2": "Data analysis techniques in HE Astroparticle Physics",
-    "HE-4": "Gamma and neutrino telescopes",
-    "HE-6": "Gamma and neutrino emissions from high energy sources",
-    "HE-7": "UHECR theory",
     "HE-8": "Plasma physics around astrophysical compact objects",
-    "GC-5": "Astrophysics of Neutron Stars",
+    "HE-9": "Accretion power in astrophysical systems",
+    "GC-1": "Feedback control and deep loop shaping",
+    "GC-2": "Multi-messenger transient",
+    "GC-3": "Nucleosynthesis",
+    "GC-7": "Multi-probe Cosmology",
+    "GC- 8": "Compact objects formation and evolution",
 }
-YEAR = 2024
+YEAR = 2025
 
 
 def auth():
